@@ -31,6 +31,7 @@ import {
   PERFORMANCE_MONITORING
 } from '../../../src/common/constants'
 import { observePageClicks } from '../../../src/common/observers'
+import { describeIf } from '../../../../../dev-utils/jasmine'
 
 describe('observePageClicks', () => {
   let serviceFactory
@@ -139,4 +140,93 @@ describe('observePageClicks', () => {
 
     cancelHistorySub()
   })
+
+  describeIf(
+    'browsers supporting closest API',
+    () => {
+      ;[
+        {
+          name:
+            'should use customTransactionName when click target is a <button> child',
+          parentTagName: 'button',
+          parentCustomTransactionName: 'button-custom-name',
+          childCustomTransactionName: 'custom-name-html-child',
+          expected: 'Click - button-custom-name'
+        },
+        {
+          name:
+            'should use customTransactionName when click target is a <a> child',
+          parentTagName: 'a',
+          parentCustomTransactionName: 'a-custom-name-html',
+          childCustomTransactionName: 'custom-name-html-child',
+          expected: 'Click - a-custom-name-html'
+        },
+        {
+          name:
+            'should use customTransactionName from child when parent does not have the attribute set',
+          parentTagName: 'button',
+          parentCustomTransactionName: null,
+          childCustomTransactionName: 'custom-name-html-child',
+          expected: 'Click - custom-name-html-child'
+        },
+        {
+          name:
+            'should not use parent customTransactionName when click target is not child from <button> nor <a>',
+          parentTagName: 'div',
+          parentCustomTransactionName: 'div-custom-name-html',
+          childCustomTransactionName: null,
+          expected: 'Click - span'
+        },
+        {
+          name:
+            'should use child customTransactionName when click target is not child from <button> nor <a>',
+          parentTagName: 'div',
+          parentCustomTransactionName: 'div-custom-name-html',
+          childCustomTransactionName: 'custom-name-html-child',
+          expected: 'Click - custom-name-html-child'
+        }
+      ].forEach(
+        ({
+          name,
+          parentTagName,
+          parentCustomTransactionName,
+          childCustomTransactionName,
+          expected
+        }) => {
+          it(`${name}`, () => {
+            unobservePageClicks = observePageClicks(transactionService)
+            let parentElement = document.createElement(parentTagName)
+            let childElement = document.createElement('span')
+            if (parentCustomTransactionName) {
+              parentElement.setAttribute(
+                'data-transaction-name',
+                parentCustomTransactionName
+              )
+            }
+            if (childCustomTransactionName) {
+              childElement.setAttribute(
+                'data-transaction-name',
+                childCustomTransactionName
+              )
+            }
+            parentElement.appendChild(childElement)
+            containerElement.appendChild(parentElement)
+            // The structured represented here is:
+            /**
+             * <{{parentTagName}} data-transaction-name="{{customTransactionName}}">
+             *   <span></span>
+             * </{{parentTagName}}>
+             */
+
+            // Perform the click on the span - which is the child of the defined {{parentElement}} node
+            childElement.click()
+
+            let tr = transactionService.getCurrentTransaction()
+            expect(tr.name).toBe(expected)
+          })
+        }
+      )
+    },
+    document.body.closest
+  )
 })

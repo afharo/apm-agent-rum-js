@@ -3,6 +3,75 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### [2.0.5](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-react@2.0.3...@elastic/apm-rum-react@2.0.5) (2025-01-10)
+
+**Note:** Version bump only for package @elastic/apm-rum-react
+
+
+
+
+
+### [2.0.4](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-react@2.0.3...@elastic/apm-rum-react@2.0.4) (2025-01-09)
+
+**Note:** Version bump only for package @elastic/apm-rum-react
+
+
+
+
+
+### [2.0.3](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-react@2.0.2...@elastic/apm-rum-react@2.0.3) (2024-06-27)
+
+**Note:** Version bump only for package @elastic/apm-rum-react
+
+
+
+
+
+### [2.0.2](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-react@2.0.1...@elastic/apm-rum-react@2.0.2) (2023-12-27)
+
+**Note:** Version bump only for package @elastic/apm-rum-react
+
+
+
+
+
+### [2.0.1](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-react@2.0.0...@elastic/apm-rum-react@2.0.1) (2023-09-27)
+
+**Note:** Version bump only for package @elastic/apm-rum-react
+
+
+
+
+
+## [2.0.0](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-react@1.4.4...@elastic/apm-rum-react@2.0.0) (2023-08-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* **rum-react:** support react-router 6 (#1410)
+
+### Features
+
+* **rum-react:** support react-router 6 ([#1410](https://github.com/elastic/apm-agent-rum-js/issues/1410)) ([401c9dd](https://github.com/elastic/apm-agent-rum-js/commit/401c9dd18d48663ed199cd30db88e21a3b89038e))
+
+
+
+### [1.4.4](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-react@1.4.3...@elastic/apm-rum-react@1.4.4) (2023-08-03)
+
+**Note:** Version bump only for package @elastic/apm-rum-react
+
+
+
+
+
+### [1.4.3](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-react@1.4.2...@elastic/apm-rum-react@1.4.3) (2023-07-18)
+
+**Note:** Version bump only for package @elastic/apm-rum-react
+
+
+
+
+
 ## [1.4.2](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-react@1.4.1...@elastic/apm-rum-react@1.4.2) (2022-06-14)
 
 **Note:** Version bump only for package @elastic/apm-rum-react

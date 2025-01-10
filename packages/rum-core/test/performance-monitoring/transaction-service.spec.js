@@ -32,18 +32,20 @@ import {
   TRANSACTION_END,
   PAGE_LOAD,
   ROUTE_CHANGE,
+  TEMPORARY_TYPE,
   LONG_TASK,
   LARGEST_CONTENTFUL_PAINT,
   PAINT,
   TRUNCATED_TYPE,
   FIRST_INPUT,
   LAYOUT_SHIFT,
-  LOCAL_CONFIG_KEY
+  LOCAL_CONFIG_KEY,
+  TRANSACTION_IGNORE
 } from '../../src/common/constants'
 import { state } from '../../src/state'
 import { isPerfTypeSupported } from '../../src/common/utils'
 import Transaction from '../../src/performance-monitoring/transaction'
-import { metrics } from '../../src/performance-monitoring/metrics'
+import { metrics } from '../../src/performance-monitoring/metrics/metrics'
 
 describe('TransactionService', function () {
   var transactionService
@@ -63,6 +65,7 @@ describe('TransactionService', function () {
     spyOn(logger, 'debug')
 
     config = new Config()
+    spyOn(config, 'dispatchEvent').and.callThrough()
     transactionService = new TransactionService(logger, config)
   })
 
@@ -258,6 +261,28 @@ describe('TransactionService', function () {
     })
   })
 
+  it('should set page load parentId before ending the transaction', function (done) {
+    config.setConfig({
+      pageLoadParentId: 'test-page-load-parent-id'
+    })
+    transactionService = new TransactionService(logger, config)
+
+    const tr = transactionService.startTransaction(undefined, 'page-load', {
+      managed: true
+    })
+
+    tr.detectFinish()
+
+    /**
+     * For page load transaction we set the transaction parentId using
+     * transaction.onEnd
+     */
+    config.events.observe(TRANSACTION_END, tr => {
+      expect(tr.parentId).toBe('test-page-load-parent-id')
+      done()
+    })
+  })
+
   it('should capture resources from navigation timing', function (done) {
     const unMock = mockGetEntriesByType()
 
@@ -357,6 +382,16 @@ describe('TransactionService', function () {
       unMock()
       done()
     })
+  })
+
+  it('should consider page load parentId', function () {
+    config.setConfig({
+      pageLoadParentId: 'test-page-load-parent-id'
+    })
+
+    transactionService = new TransactionService(logger, config)
+    const tr = sendPageLoadMetrics()
+    expect(tr.options.pageLoadParentId).toBe('test-page-load-parent-id')
   })
 
   it('should call createCurrentTransaction once per startTransaction', function () {
@@ -648,12 +683,7 @@ describe('TransactionService', function () {
 
     config.events.observe(TRANSACTION_END, () => {
       const breakdown = tr.breakdownTimings
-      expect(breakdown[0].samples).toEqual({
-        'transaction.duration.count': { value: 1 },
-        'transaction.duration.sum.us': { value: 30 },
-        'transaction.breakdown.count': { value: 1 }
-      })
-      expect(breakdown[1]).toEqual({
+      expect(breakdown[0]).toEqual({
         transaction: { name: 'transaction', type: 'custom' },
         span: { type: 'app', subtype: undefined },
         samples: {
@@ -661,12 +691,12 @@ describe('TransactionService', function () {
           'span.self_time.sum.us': { value: 0 }
         }
       })
-      expect(breakdown[2]).toEqual({
+      expect(breakdown[1]).toEqual({
         transaction: { name: 'transaction', type: 'custom' },
         span: { type: 'ext', subtype: 'http' },
         samples: {
           'span.self_time.count': { value: 2 },
-          'span.self_time.sum.us': { value: 40 }
+          'span.self_time.sum.us': { value: 40000 }
         }
       })
       done()
@@ -736,6 +766,7 @@ describe('TransactionService', function () {
     expect(logger.debug).toHaveBeenCalledWith(
       `transaction(${tr.id}, ${tr.name}, ${tr.type}) was discarded! The page was hidden during the transaction!`
     )
+    expect(config.dispatchEvent).toHaveBeenCalledWith(TRANSACTION_IGNORE)
 
     state.lastHiddenStart = performance.now() - 1000
     tr = transactionService.startTransaction('test-name', 'test-type')
@@ -744,6 +775,28 @@ describe('TransactionService', function () {
       `transaction(${tr.id}, ${tr.name}, ${tr.type}) was discarded! The page was hidden during the transaction!`
     )
     state.lastHiddenStart = lastHiddenStart
+  })
+
+  it('should discard TEMPORARY_TYPE transactions', async () => {
+    let tr = transactionService.startTransaction('test-name', TEMPORARY_TYPE)
+    await tr.end()
+    expect(logger.debug).toHaveBeenCalledWith(
+      `transaction(${tr.id}, ${tr.name}, ${tr.type}) is ignored`
+    )
+    expect(config.dispatchEvent).toHaveBeenCalledWith(TRANSACTION_IGNORE)
+  })
+
+  it('should discard transaction configured to be ignored', async () => {
+    config.setConfig({
+      ignoreTransactions: ['ignore-tr']
+    })
+    let tr = transactionService.startTransaction('ignore-tr', 'type')
+    await tr.end()
+    config.setConfig({ ignoreTransactions: [] })
+    expect(logger.debug).toHaveBeenCalledWith(
+      `transaction(${tr.id}, ${tr.name}, ${tr.type}) is ignored`
+    )
+    expect(config.dispatchEvent).toHaveBeenCalledWith(TRANSACTION_IGNORE)
   })
 
   it('should set session information on transaction', () => {

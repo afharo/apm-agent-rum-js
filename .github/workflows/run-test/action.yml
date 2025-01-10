@@ -21,39 +21,30 @@ inputs:
     options:
       - none
       - saucelabs
-  vault-url:
-    description: 'Vault URL'
+  sauce-username:
+    description: 'Sauce username'
     required: false
-  vault-role-id:
-    description: 'Vault role ID'
-    required: false
-  vault-secret-id:
-    description: 'Vault secret ID'
+  sauce-access-key:
+    description: 'Sauce access key'
     required: false
 
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
     - name: Pull and build docker infra
       run: './.ci/scripts/pull_and_build.sh'
       shell: bash
-    - uses: hashicorp/vault-action@v2.5.0
-      if: |
+    - if: |
         (inputs.mode == 'saucelabs')
-        && (inputs.vault-url != null && inputs.vault-url != '')
-        && (inputs.vault-role-id != null && inputs.vault-role-id != '')
-        && (inputs.vault-secret-id != null && inputs.vault-secret-id != '')
-      with:
-        url: ${{ inputs.vault-url }}
-        roleId: ${{ inputs.vault-role-id }}
-        secretId: ${{ inputs.vault-secret-id }}
-        method: approle
-        secrets: |
-          ${{ env.SAUCELABS_SECRET }} SAUCE_USERNAME | SAUCE_USERNAME ;
-          ${{ env.SAUCELABS_SECRET }} SAUCE_ACCESS_KEY | SAUCE_ACCESS_KEY
+        && (inputs.sauce-access-key != null && inputs.sauce-access-key != '')
+        && (inputs.sauce-username != null && inputs.sauce-username != '')
+      shell: bash
+      run: |
+        echo "SAUCE_ACCESS_KEY=${{ inputs.sauce-access-key }}" >> $GITHUB_ENV
+        echo "SAUCE_USERNAME=${{ inputs.sauce-username }}"     >> $GITHUB_ENV
     - name: Run tests Elastic Stack ${{ matrix.stack-version }} - ${{ matrix.scope }} - ${{ fromJSON('{"none":"Puppeteer"}')[inputs.mode] || inputs.mode }}
       run: './.ci/scripts/test.sh'
       shell: bash
@@ -62,10 +53,23 @@ runs:
         MODE: ${{ inputs.mode }}
         SCOPE: ${{ inputs.scope }}
         STACK_VERSION: ${{ inputs.stack-version }}
+    # The upload-artifact action fails if the name contains slashes `/` or colons `:`.
+    # This step creates a slugified version that will not contain these characters.
+    - uses: gacts/github-slug@7ef5f322bcd0902e63d75aae219a71367852a7b9 # 1.3.1
+      id: slug
+      if: success() || failure()
+      with:
+        to-slug: ${{ inputs.goal }}-${{ inputs.mode }}-${{ inputs.scope }}-${{ inputs.stack-version }}
     - name: Store test results
       if: success() || failure()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: test-results
+        name: test-results-${{ steps.slug.outputs.slug }}
         path: |
           packages/**/reports/TESTS-*.xml
+    - name: Reset environment
+      if: always()
+      shell: bash
+      run: |
+        echo "SAUCE_ACCESS_KEY=" >> $GITHUB_ENV
+        echo "SAUCE_USERNAME="   >> $GITHUB_ENV

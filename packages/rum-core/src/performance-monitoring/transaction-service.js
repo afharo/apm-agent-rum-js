@@ -30,7 +30,7 @@ import {
   captureObserverEntries,
   metrics,
   createTotalBlockingTimeSpan
-} from './metrics'
+} from './metrics/metrics'
 import {
   extend,
   getEarliestSpan,
@@ -39,12 +39,13 @@ import {
   isPerfTypeSupported,
   generateRandomId
 } from '../common/utils'
-import { captureNavigation } from './capture-navigation'
+import { captureNavigation } from './navigation/capture-navigation'
 import {
   PAGE_LOAD,
   NAME_UNKNOWN,
   TRANSACTION_START,
   TRANSACTION_END,
+  TRANSACTION_IGNORE,
   TEMPORARY_TYPE,
   TRANSACTION_TYPE_ORDER,
   LARGEST_CONTENTFUL_PAINT,
@@ -108,7 +109,8 @@ class TransactionService {
           pageLoadTraceId: config.pageLoadTraceId,
           pageLoadSampled: config.pageLoadSampled,
           pageLoadSpanId: config.pageLoadSpanId,
-          pageLoadTransactionName: config.pageLoadTransactionName
+          pageLoadTransactionName: config.pageLoadTransactionName,
+          pageLoadParentId: config.pageLoadParentId
         },
         perfOptions
       )
@@ -251,13 +253,13 @@ class TransactionService {
       () => {
         const { name, type } = tr
         let { lastHiddenStart } = state
-
         if (lastHiddenStart >= tr._start) {
           if (__DEV__) {
             this._logger.debug(
               `transaction(${tr.id}, ${name}, ${type}) was discarded! The page was hidden during the transaction!`
             )
           }
+          this._config.dispatchEvent(TRANSACTION_IGNORE)
           return
         }
 
@@ -267,6 +269,7 @@ class TransactionService {
               `transaction(${tr.id}, ${name}, ${type}) is ignored`
             )
           }
+          this._config.dispatchEvent(TRANSACTION_IGNORE)
           return
         }
 
@@ -281,6 +284,7 @@ class TransactionService {
           if (name === NAME_UNKNOWN && pageLoadTransactionName) {
             tr.name = pageLoadTransactionName
           }
+          
           /**
            * Capture the TBT as span after observing for all long task entries
            * and once performance observer is disconnected

@@ -3,6 +3,86 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### [5.22.1](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-core@5.22.0...@elastic/apm-rum-core@5.22.1) (2025-01-10)
+
+
+### Bug Fixes
+
+* **rum-core:** fix for `merge` utility function ([#1555](https://github.com/elastic/apm-agent-rum-js/issues/1555)) ([0d1eda5](https://github.com/elastic/apm-agent-rum-js/commit/0d1eda5b90e2930806e8d1cb733454bd8db12e89))
+
+
+
+## [5.22.0](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-core@5.21.1...@elastic/apm-rum-core@5.22.0) (2025-01-09)
+
+
+### Features
+
+* add pageLoadParentId configuration ([#1521](https://github.com/elastic/apm-agent-rum-js/issues/1521)) ([25143ab](https://github.com/elastic/apm-agent-rum-js/commit/25143ab2c0a057cc1f6510fcced0a739c5cce792))
+
+
+
+### [5.21.1](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-core@5.21.0...@elastic/apm-rum-core@5.21.1) (2024-06-27)
+
+
+### Bug Fixes
+
+* **rum:** make sure custom transaction name logic is IE11 compliant ([#1511](https://github.com/elastic/apm-agent-rum-js/issues/1511)) ([b192e28](https://github.com/elastic/apm-agent-rum-js/commit/b192e2892a2bc142aa810cfd0bc7937563cb8d2d))
+
+
+
+## [5.21.0](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-core@5.20.0...@elastic/apm-rum-core@5.21.0) (2023-12-27)
+
+
+### Features
+
+* **rum:** report INP metric ([#1462](https://github.com/elastic/apm-agent-rum-js/issues/1462)) ([866f066](https://github.com/elastic/apm-agent-rum-js/commit/866f066687a789252712c69301384d5473e22228))
+
+
+
+## [5.20.0](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-core@5.19.0...@elastic/apm-rum-core@5.20.0) (2023-09-27)
+
+
+### Features
+
+* **rum-core:** stringify rejected obj ([#1428](https://github.com/elastic/apm-agent-rum-js/issues/1428)) ([9785834](https://github.com/elastic/apm-agent-rum-js/commit/9785834cb1f48b5a461ff4f8b21f4a914f4f6c3f))
+
+
+### Bug Fixes
+
+* **rum-core:** unsampled page load transaction start must be zero ([#1435](https://github.com/elastic/apm-agent-rum-js/issues/1435)) ([946c674](https://github.com/elastic/apm-agent-rum-js/commit/946c674d46b1b5845c4b252f4c2b4de6ce78aa61))
+
+
+
+## [5.19.0](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-core@5.18.0...@elastic/apm-rum-core@5.19.0) (2023-08-03)
+
+
+### Features
+
+* **rum:** add redirect span for same-origin redirect ([#1400](https://github.com/elastic/apm-agent-rum-js/issues/1400)) ([bcd14bf](https://github.com/elastic/apm-agent-rum-js/commit/bcd14bfc69377bc82880afc45813efa7acde0e70))
+
+
+### Bug Fixes
+
+* **rum-core:** add URL object support in fetch instrumentation ([#1398](https://github.com/elastic/apm-agent-rum-js/issues/1398)) ([d71a093](https://github.com/elastic/apm-agent-rum-js/commit/d71a09361f22c67eef849f693830932858f9b230))
+
+
+
+## [5.18.0](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-core@5.17.0...@elastic/apm-rum-core@5.18.0) (2023-07-18)
+
+
+### Features
+
+* **rum-core:** enhance user transaction name obtaining ([#1390](https://github.com/elastic/apm-agent-rum-js/issues/1390)) ([1144b9f](https://github.com/elastic/apm-agent-rum-js/commit/1144b9fd3b84f49eca543a95e9bdf61a9aa37835))
+
+
+### Bug Fixes
+
+* check supportedEntryTypes when starting observer ([#1246](https://github.com/elastic/apm-agent-rum-js/issues/1246)) ([c906018](https://github.com/elastic/apm-agent-rum-js/commit/c906018b6273268f1bab8d1c152b64ba6486345a))
+* report breakdown span time in microseconds ([#1381](https://github.com/elastic/apm-agent-rum-js/issues/1381)) ([a0b4368](https://github.com/elastic/apm-agent-rum-js/commit/a0b43687649bc4342ee08c112181d0368d6eda6c))
+* **rum:** stop recording transaction breakdown metrics ([#1382](https://github.com/elastic/apm-agent-rum-js/issues/1382)) ([be1c619](https://github.com/elastic/apm-agent-rum-js/commit/be1c619f65d76cccd6ed139380294b3f4ee590a3))
+
+
+
 # [5.17.0](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum-core@5.16.0...@elastic/apm-rum-core@5.17.0) (2022-06-14)
 
 

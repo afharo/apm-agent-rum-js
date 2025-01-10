@@ -14,13 +14,13 @@ scms:
   default:
     kind: github
     spec:
-      user: '{{ requiredEnv "GIT_USER" }}'
-      email: '{{ requiredEnv "GIT_EMAIL" }}'
+      user: '{{ requiredEnv "GITHUB_ACTOR" }}'
       owner: elastic
       repository: apm-agent-rum-js
       token: '{{ requiredEnv "GITHUB_TOKEN" }}'
-      username: '{{ requiredEnv "GIT_USER" }}'
+      username: '{{ requiredEnv "GITHUB_ACTOR" }}'
       branch: main
+      commitusingapi: true
 
 sources:
   latestRelease:
@@ -32,7 +32,7 @@ sources:
       owner: elastic
       repository: elasticsearch
       token: '{{ requiredEnv "GITHUB_TOKEN" }}'
-      username: '{{ requiredEnv "GIT_USER" }}'
+      username: '{{ requiredEnv "GITHUB_ACTOR" }}'
       versionfilter:
         kind: regex
         pattern: ^v8\.(\d+)\.(\d+)$
@@ -55,6 +55,17 @@ targets:
     kind: file
     spec:
       file: .github/workflows/ci.yml
+      content: >-
+        '{{ source `latestRelease` }}'
+      matchpattern: \'[0-9]+\.[0-9]+\.[0-9]+\'
+
+  update-microbenchmark-workflow:
+    name: 'Update elastic stack version to {{ source "latestRelease" }}'
+    sourceid: latestRelease
+    scmid: default
+    kind: file
+    spec:
+      file: .github/workflows/microbenchmark.yml
       content: >-
         '{{ source `latestRelease` }}'
       matchpattern: \'[0-9]+\.[0-9]+\.[0-9]+\'

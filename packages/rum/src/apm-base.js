@@ -37,7 +37,8 @@ import {
   EVENT_TARGET,
   CLICK,
   observePageVisibility,
-  observePageClicks
+  observePageClicks,
+  observeUserInteractions
 } from '@elastic/apm-rum-core'
 
 export default class ApmBase {
@@ -71,7 +72,7 @@ export default class ApmBase {
       /**
        * Set Agent version to be sent as part of metadata to the APM Server
        */
-      configService.setVersion('5.12.0')
+      configService.setVersion('5.16.3')
       this.config(config)
       /**
        * Set level here to account for both active and inactive cases
@@ -125,6 +126,7 @@ export default class ApmBase {
         if (flags[EVENT_TARGET] && flags[CLICK]) {
           observePageClicks(transactionService)
         }
+        observeUserInteractions()
       } else {
         this._disable = true
         loggingService.warn('RUM agent is inactive')

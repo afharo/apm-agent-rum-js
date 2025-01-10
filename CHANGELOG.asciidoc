@@ -29,6 +29,56 @@ See Conventional Commits (https://conventionalcommits.org) for commit guidelines
 [[release-notes-5.x]]
 === RUM JS Agent version 5.x
 
+
+[[release-notes-5.16.1]]
+==== 5.16.1 (2024-06-27)
+[float]
+===== Bug fixes
+* User interaction click transactions will report correct transaction names for IE11 {pull}1511[#1511]
+
+
+[[release-notes-5.16.0]]
+==== 5.16.0 (2023-12-27)
+[float]
+===== Features
+* Add Support for https://web.dev/articles/inp[Interaction to Next Paint (INP) metric]. This new metric, which replaces FID, will be available in the User Experience App from version 8.12.0 of the Elastic Stack. {pull}1462[#1462]
+
+[[release-notes-5.15.0]]
+==== 5.15.0 (2023-09-27)
+[float]
+===== Potentially breaking changes
+* Previously, there was a start time discrepancy between sampled and unsampled page load transactions, which was wrong. From now on,
+the agent will set the same start time for both of them.
+
+Custom dashboards built using the page load duration will see an effect with the solution: {pull}1435[#1435]
+
+===== Features
+* Capture errors from objects thrown from the promise rejection events including the `reason and custom properties`: {pull}1428[#1428]
+
+[[release-notes-5.14.0]]
+==== 5.14.0 (2023-08-03)
+[float]
+===== Features
+* Add redirect span to the page-load transaction: {pull}1400[#1400]
+
+===== Bug fixes
+* Fetch API instrumentation now handles requests with `URL` objects. {pull}1398[#1398]
+
+[[release-notes-5.13.0]]
+==== 5.13.0 (2023-07-19)
+[float]
+===== Potentially breaking changes
+* Previously, breakdown timings were reported as milliseconds values in the `span.self_time.sum.us` field, which was wrong. From now on, it will be reported as microsecond values to match the APM specification: {pull}1381[#1381]
+* The metrics `transaction.duration.sum.us`, `transaction.duration.count` and `transaction.breakdown.count` are no longer recorded: {pull}1382[#1382]
+
+===== Features
+* Support for Angular 16 is made available via `@elastic/apm-rum-angular@3.0.0`: {pull}1380[#1380]
+* Improve user-interaction transactions naming. Unsupported browsers: IE11 {pull}1390[#1390]
+* Add `apmRequest` and `sendCredentials` config to TypeScript typings: {pull}1254[#1254] {pull}1243[#1243]
+
+===== Bug fixes
+* Fix warnings where performance entries are not supported: {pull}1246[#1246]
+
 [[release-notes-5.12.0]]
 ==== 5.12.0 (2022-06-14)
 [float]

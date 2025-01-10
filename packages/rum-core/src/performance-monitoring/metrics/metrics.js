@@ -29,9 +29,14 @@ import {
   FIRST_CONTENTFUL_PAINT,
   FIRST_INPUT,
   LAYOUT_SHIFT
-} from '../common/constants'
-import { noop, PERF, isPerfTypeSupported } from '../common/utils'
-import Span from './span'
+} from '../../common/constants'
+import {
+  noop,
+  PERF,
+  isPerfTypeSupported,
+  isRedirectInfoAvailable
+} from '../../common/utils'
+import Span from '../span'
 
 export const metrics = {
   fid: 0,
@@ -54,6 +59,7 @@ export const metrics = {
 }
 
 const LONG_TASK_THRESHOLD = 50
+
 /**
  * Create Spans for the long task entries
  * Spec - https://w3c.github.io/longtasks/
@@ -262,10 +268,17 @@ export function captureObserverEntries(list, { isHardNavigation, trStart }) {
    */
   const timing = PERF.timing
   /**
+   *
    * To avoid capturing the unload event handler effect
    * as part of the page-load transaction duration
    */
-  const unloadDiff = timing.fetchStart - timing.navigationStart
+  let unloadDiff = timing.fetchStart - timing.navigationStart
+  if (isRedirectInfoAvailable(timing)) {
+    // this makes sure the FCP startTime includes the redirect time
+    // otherwise the mark would not show up properly in the UI waterfall
+    unloadDiff = 0
+  }
+
   const fcpEntry = list.getEntriesByName(FIRST_CONTENTFUL_PAINT)[0]
   if (fcpEntry) {
     const fcp = parseInt(
@@ -316,7 +329,7 @@ export class PerfEntryRecorder {
     }
   }
 
-  start(type) {
+  start(type, options = { buffered: true }) {
     try {
       if (!isPerfTypeSupported(type)) {
         return
@@ -329,7 +342,7 @@ export class PerfEntryRecorder {
        *   browsers would throw error when using entryTypes options along with
        *   buffered flag (https://w3c.github.io/performance-timeline/#observe-method)
        */
-      this.po.observe({ type, buffered: true })
+      this.po.observe({ type, ...options })
     } catch (_) {
       /**
        * Even though we check supportedEntryTypes before starting the observer,

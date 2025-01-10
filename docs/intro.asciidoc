@@ -7,6 +7,11 @@ It has built-in support for popular platforms and frameworks, and an API for cus
 The Agent also supports <<distributed-tracing-guide,distributed tracing>> for all outgoing requests.
 This enables you to analyze performance throughout your microservice architecture -- all in one view.
 
+[NOTE]
+====
+The Elastic APM RUM JavaScript Agent is _not_ compatible with {serverless-docs}[{serverless-full}] -- it cannot send data to the APM endpoint for serverless projects.
+====
+
 [float]
 [[features]]
 === Features
@@ -20,7 +25,7 @@ captures the following information:
 * API requests (XMLHttpRequest and Fetch)
 * Single page application navigations
 * <<user-interactions, User interactions>> (click events that trigger network activity)
-* <<user-centric-metrics, User-centric metrics>> (Long tasks, FCP, LCP, FID, etc.)
+* <<user-centric-metrics, User-centric metrics>> (Long tasks, FCP, LCP, INP, FID, etc.)
 * Page information (URLs visited and referrer)
 * Network connection information
 * JavaScript errors
@@ -31,8 +36,8 @@ captures the following information:
 [[additional-components]]
 === Additional Components
 
-APM Agents work in conjunction with the {apm-guide-ref}/index.html[APM Server], {ref}/index.html[Elasticsearch], and {kibana-ref}/index.html[Kibana].
-The {apm-guide-ref}/index.html[APM Guide] provides details on how these components work together,
-and provides a matrix outlining {apm-guide-ref}/agent-server-compatibility.html[Agent and Server compatibility].
+APM Agents work in conjunction with the {observability-guide}/apm.html[APM Server], {ref}/index.html[Elasticsearch], and {kibana-ref}/index.html[Kibana].
+The {observability-guide}/apm.html[APM Guide] provides details on how these components work together,
+and provides a matrix outlining {observability-guide}/apm-agent-server-compatibility.html[Agent and Server compatibility].
 
 include::./set-up.asciidoc[]

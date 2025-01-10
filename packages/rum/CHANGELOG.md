@@ -3,6 +3,68 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### [5.16.3](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum@5.16.2...@elastic/apm-rum@5.16.3) (2025-01-10)
+
+**Note:** Version bump only for package @elastic/apm-rum
+
+
+
+
+
+### [5.16.2](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum@5.16.1...@elastic/apm-rum@5.16.2) (2025-01-09)
+
+**Note:** Version bump only for package @elastic/apm-rum
+
+
+
+
+
+### [5.16.1](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum@5.16.0...@elastic/apm-rum@5.16.1) (2024-06-27)
+
+**Note:** Version bump only for package @elastic/apm-rum
+
+
+
+
+
+## [5.16.0](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum@5.15.0...@elastic/apm-rum@5.16.0) (2023-12-27)
+
+
+### Features
+
+* **rum:** report INP metric ([#1462](https://github.com/elastic/apm-agent-rum-js/issues/1462)) ([866f066](https://github.com/elastic/apm-agent-rum-js/commit/866f066687a789252712c69301384d5473e22228))
+
+
+
+## [5.15.0](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum@5.14.0...@elastic/apm-rum@5.15.0) (2023-09-27)
+
+
+### Features
+
+* **rum-core:** stringify rejected obj ([#1428](https://github.com/elastic/apm-agent-rum-js/issues/1428)) ([9785834](https://github.com/elastic/apm-agent-rum-js/commit/9785834cb1f48b5a461ff4f8b21f4a914f4f6c3f))
+
+
+
+## [5.14.0](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum@5.13.0...@elastic/apm-rum@5.14.0) (2023-08-03)
+
+
+### Features
+
+* **rum:** force minor version bump rum package ([#1402](https://github.com/elastic/apm-agent-rum-js/issues/1402)) ([8a656b7](https://github.com/elastic/apm-agent-rum-js/commit/8a656b7ab38897a0dc5f44f156cfd84c6c7140f8))
+
+
+
+## [5.13.0](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum@5.12.0...@elastic/apm-rum@5.13.0) (2023-07-18)
+
+
+### Features
+
+* **rum-core:** add apmRequest config typescript type ([#1254](https://github.com/elastic/apm-agent-rum-js/issues/1254)) ([cfaa327](https://github.com/elastic/apm-agent-rum-js/commit/cfaa327ba3715c90750157eab66149be8437d2a8))
+* **rum-core:** enhance user transaction name obtaining ([#1390](https://github.com/elastic/apm-agent-rum-js/issues/1390)) ([1144b9f](https://github.com/elastic/apm-agent-rum-js/commit/1144b9fd3b84f49eca543a95e9bdf61a9aa37835))
+* **rum:** add sendCredentials config option to TypeScript typings ([#1243](https://github.com/elastic/apm-agent-rum-js/issues/1243)) ([369800e](https://github.com/elastic/apm-agent-rum-js/commit/369800e17db59e39dbbfc3c9ab0e1483b45b2c9e))
+
+
+
 # [5.12.0](https://github.com/elastic/apm-agent-rum-js/compare/@elastic/apm-rum@5.11.1...@elastic/apm-rum@5.12.0) (2022-06-14)
 
 

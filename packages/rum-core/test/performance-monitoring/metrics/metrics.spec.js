@@ -31,15 +31,21 @@ import {
   metrics,
   calculateCumulativeLayoutShift,
   createLongTaskSpans
-} from '../../src/performance-monitoring/metrics'
-import { LARGEST_CONTENTFUL_PAINT, LONG_TASK } from '../../src/common/constants'
-import { isPerfTypeSupported } from '../../src/common/utils'
+} from '../../../src/performance-monitoring/metrics/metrics'
+import {
+  LARGEST_CONTENTFUL_PAINT,
+  LONG_TASK
+} from '../../../src/common/constants'
+import { isPerfTypeSupported } from '../../../src/common/utils'
 import {
   mockObserverEntryTypes,
-  mockObserverEntryNames
-} from '../utils/globals-mock'
-import longtaskEntries from '../fixtures/longtask-entries'
-import fidEntries from '../fixtures/fid-entries'
+  mockObserverEntryNames,
+  mockPerformanceTimingEntries
+} from '../../utils/globals-mock'
+import longtaskEntries from '../../fixtures/longtask-entries'
+import fidEntries from '../../fixtures/fid-entries'
+import { fcpEntries } from '../../fixtures/paint-entries'
+import { canMockPerfTimingApi } from '../..'
 
 describe('Metrics', () => {
   describe('PerfEntryRecorder', () => {
@@ -96,19 +102,66 @@ describe('Metrics', () => {
       })
     })
 
-    it('should set firstContentfulPaint if isHardNavigation is true ', () => {
-      list.getEntriesByName.and.callFake(mockObserverEntryNames)
-      const { marks: notHardNavigation } = captureObserverEntries(list, {
-        isHardNavigation: false
-      })
-      expect(notHardNavigation).toEqual({})
+    describe('firstContentfulPaint', () => {
+      it('should set FCP if isHardNavigation is true ', () => {
+        list.getEntriesByName.and.callFake(mockObserverEntryNames)
+        const { marks: notHardNavigation } = captureObserverEntries(list, {
+          isHardNavigation: false
+        })
+        expect(notHardNavigation).toEqual({})
 
-      const { marks: hardNavigation } = captureObserverEntries(list, {
-        isHardNavigation: true
+        const { marks: hardNavigation } = captureObserverEntries(list, {
+          isHardNavigation: true
+        })
+        expect(hardNavigation).toEqual({
+          firstContentfulPaint: jasmine.any(Number)
+        })
       })
-      expect(hardNavigation).toEqual({
-        firstContentfulPaint: jasmine.any(Number)
-      })
+
+      if (canMockPerfTimingApi()) {
+        ;[
+          {
+            name:
+              'should subtract the unload event duration from FCP when there is no redirection',
+            navigationEntries: {
+              navigationStart: 0,
+              fetchStart: 30
+            },
+            originalFcp: 200,
+            expectedFcp: 170
+          },
+          {
+            name: 'should keep the FCP as it is when there is a redirection',
+            navigationEntries: {
+              navigationStart: 0,
+              redirectStart: 20,
+              fetchStart: 30
+            },
+            originalFcp: 200,
+            expectedFcp: 200
+          }
+        ].forEach(({ name, navigationEntries, originalFcp, expectedFcp }) => {
+          it(name, () => {
+            const originalFcpEntry = fcpEntries[0]
+            // fcp startTime
+            fcpEntries[0].startTime = originalFcp
+
+            // unload event duration (timing.fetchStart - timing.navigationStart)
+            const unMock = mockPerformanceTimingEntries(navigationEntries)
+
+            list.getEntriesByName.and.callFake(mockObserverEntryNames)
+            const { marks } = captureObserverEntries(list, {
+              isHardNavigation: true
+            })
+            expect(marks).toEqual({
+              firstContentfulPaint: expectedFcp
+            })
+
+            fcpEntries[0] = originalFcpEntry
+            unMock()
+          })
+        })
+      }
     })
 
     it('should create long tasks attribution data in span context', () => {

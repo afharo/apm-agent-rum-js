@@ -284,12 +284,12 @@ function getCurrentScript() {
   }
 }
 
-function extend(dst) {
-  return baseExtend(dst, slice.call(arguments, 1), false)
+function extend() {
+  return baseExtend(Object.create(null), slice.call(arguments), false)
 }
 
-function merge(dst) {
-  return baseExtend(dst, slice.call(arguments, 1), true)
+function merge() {
+  return baseExtend(Object.create(null), slice.call(arguments), true)
 }
 
 function isUndefined(obj) {
@@ -401,6 +401,10 @@ function isPerfTypeSupported(type) {
   )
 }
 
+function isPerfInteractionCountSupported() {
+  return 'interactionCount' in performance
+}
+
 /**
  * The goal of this is to make sure that HAR files
  * can be created containing beacons with the payload readable
@@ -429,6 +433,11 @@ function isBeaconInspectionEnabled() {
   }
 
   return false
+}
+
+// redirect info is only available for same-origin redirects
+function isRedirectInfoAvailable(timing) {
+  return timing.redirectStart > 0
 }
 
 export {
@@ -470,5 +479,7 @@ export {
   isPerfTimelineSupported,
   isBrowser,
   isPerfTypeSupported,
-  isBeaconInspectionEnabled
+  isPerfInteractionCountSupported,
+  isBeaconInspectionEnabled,
+  isRedirectInfoAvailable
 }

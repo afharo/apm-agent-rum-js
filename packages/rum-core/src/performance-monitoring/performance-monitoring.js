@@ -47,7 +47,8 @@ import {
   OUTCOME_FAILURE,
   OUTCOME_SUCCESS,
   OUTCOME_UNKNOWN,
-  QUEUE_ADD_TRANSACTION
+  QUEUE_ADD_TRANSACTION,
+  TRANSACTION_IGNORE
 } from '../common/constants'
 import {
   truncateModel,
@@ -397,6 +398,7 @@ export default class PerformanceMonitoring {
 
     const transactionData = {
       id: transaction.id,
+      parent_id: transaction.parentId,
       trace_id: transaction.traceId,
       session: transaction.session,
       name: transaction.name,
@@ -423,5 +425,7 @@ export default class PerformanceMonitoring {
     if (filtered) {
       return this.createTransactionDataModel(transaction)
     }
+
+    this._configService.dispatchEvent(TRANSACTION_IGNORE)
   }
 }
